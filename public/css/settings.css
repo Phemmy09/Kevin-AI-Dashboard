@@ -1,0 +1,212 @@
+/* ==========================================================================
+   PROFILE PANEL
+   ========================================================================== */
+
+.profile-card {
+  max-width: 680px;
+  border-radius: 12px;
+}
+
+.profile-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.profile-large-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-cyan));
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.25);
+  flex-shrink: 0;
+}
+
+.profile-avatar-section h3 {
+  font-size: 1.3rem;
+  margin-bottom: 4px;
+}
+
+.profile-avatar-section p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-divider {
+  border: 0;
+  height: 1px;
+  background-color: var(--border);
+  margin: 24px 0;
+}
+
+.form-section-title {
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   SETTINGS LAYOUT
+   ========================================================================== */
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.settings-grid .full-width {
+  grid-column: span 2;
+}
+
+.settings-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* Theme Option Selector Cards */
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.theme-option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: rgba(15, 23, 42, 0.2);
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+body.theme-light .theme-option-card {
+  background-color: rgba(15, 23, 42, 0.03);
+}
+
+.theme-option-card:hover {
+  border-color: var(--text-secondary);
+}
+
+.theme-option-card.active {
+  border-color: var(--accent-cyan);
+  background-color: rgba(6, 182, 212, 0.05);
+}
+
+.theme-preview {
+  width: 100%;
+  height: 60px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.theme-option-card span {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Theme Previews Colors */
+.bg-slate-preview {
+  background-color: #0F172A;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.bg-light-preview {
+  background-color: #F8FAFC;
+  box-shadow: inset 0 0 10px rgba(15, 23, 42, 0.1);
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.bg-cyber-preview {
+  background-color: #030712;
+  box-shadow: inset 0 0 10px rgba(6, 182, 212, 0.2);
+  border-color: rgba(6, 182, 212, 0.3) !important;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Sandbox Panel */
+.dev-sandbox-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.dev-sandbox-body h5 {
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.sandbox-actions {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+/* ==========================================================================
+   RESPONSIVENESS
+   ========================================================================== */
+
+@media (max-width: 991px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .settings-grid .full-width {
+    grid-column: span 1;
+  }
+  
+  .dev-sandbox-body {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+  
+  .sandbox-actions {
+    align-self: flex-start;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 576px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .theme-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .theme-preview {
+    height: 40px;
+  }
+}

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kevin AI - Premium Analytics & Chat Dashboard</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/chat.css">
+  <link rel="stylesheet" href="/css/settings.css">
+</head>
+<body class="theme-dark">
+
+  <!-- ==================== AUTH CONTAINER ==================== -->
+  <div id="authContainer" class="auth-container">
+    <div class="auth-card glassmorphism">
+      <div class="auth-header">
+        <img src="/assets/logo-light.png" id="authLogo" alt="Kevin AI Logo" class="auth-logo">
+        <h1 class="auth-title">Kevin AI</h1>
+        <p class="auth-subtitle">Elevating Human-AI Integration</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form active">
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-envelope"></i>
+            <input type="email" id="loginEmail" placeholder="name@company.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="loginPassword" placeholder="••••••••" required>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <span>Sign In</span> <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <p class="auth-toggle-text">Don't have an account? <a href="#" id="showRegister">Create account</a></p>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" class="auth-form">
+        <div class="form-group">
+          <label for="registerName">Full Name</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-user"></i>
+            <input type="text" id="registerName" placeholder="John Doe" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="registerEmail">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-envelope"></i>
+            <input type="email" id="registerEmail" placeholder="name@company.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="registerPassword">Password</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="registerPassword" placeholder="••••••••" minlength="6" required>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <span>Sign Up</span> <i class="fa-solid fa-user-plus"></i>
+        </button>
+        <p class="auth-toggle-text">Already have an account? <a href="#" id="showLogin">Sign in</a></p>
+      </form>
+
+      <!-- Global Message Box -->
+      <div id="authMessage" class="alert hidden"></div>
+    </div>
+  </div>
+
+  <!-- ==================== APP CONTAINER ==================== -->
+  <div id="appContainer" class="app-container hidden">
+    
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-brand">
+        <img src="/assets/logo-light.png" alt="Kevin AI Logo" class="brand-logo" id="sidebarLogo">
+        <span class="brand-name">Kevin AI</span>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <ul>
+          <li>
+            <a href="#" class="nav-item active" data-target="dashboardPanel">
+              <i class="fa-solid fa-chart-pie"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-target="chatPanel">
+              <i class="fa-regular fa-comments"></i>
+              <span>AI Chat</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-target="profilePanel">
+              <i class="fa-regular fa-id-card"></i>
+              <span>Profile</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-target="settingsPanel">
+              <i class="fa-solid fa-sliders"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-pill">
+          <div class="user-avatar" id="userAvatarPill">KA</div>
+          <div class="user-info">
+            <span class="user-name" id="userNamePill">Loading...</span>
+            <span class="user-role">Developer</span>
+          </div>
+        </div>
+        <a href="#" id="logoutBtn" class="logout-btn" title="Sign Out">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MOBILE HEADER -->
+    <header class="mobile-header">
+      <button id="mobileMenuToggle" class="mobile-toggle-btn">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="mobile-brand">
+        <img src="/assets/logo-light.png" alt="Kevin AI Logo" class="brand-logo" id="mobileLogo">
+        <span>Kevin AI</span>
+      </div>
+      <div class="user-avatar" id="userAvatarPillMobile">KA</div>
+    </header>
+
+    <!-- MAIN MAIN CONTENT VIEWPORT -->
+    <main class="main-content">
+      
+      <!-- 1. DASHBOARD PANEL -->
+      <section id="dashboardPanel" class="content-panel active">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Overview</h2>
+            <p class="panel-subtitle">Welcome back, <span id="dashWelcomeName" class="highlight">Developer</span>. Here are your stats.</p>
+          </div>
+          <div class="date-badge">
+            <i class="fa-regular fa-calendar-days"></i>
+            <span id="currentDateStr">August 4, 2026</span>
+          </div>
+        </div>
+
+        <!-- Metric Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card glassmorphism">
+            <div class="metric-icon bg-blue-tint">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Total Requests</span>
+              <h3 class="metric-value" id="statRequests">0</h3>
+            </div>
+          </div>
+          
+          <div class="metric-card glassmorphism">
+            <div class="metric-icon bg-cyan-tint">
+              <i class="fa-solid fa-microchip"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Tokens Spent</span>
+              <h3 class="metric-value" id="statTokens">0</h3>
+            </div>
+          </div>
+
+          <div class="metric-card glassmorphism">
+            <div class="metric-icon bg-purple-tint">
+              <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Avg Response Time</span>
+              <h3 class="metric-value" id="statTime">0 ms</h3>
+            </div>
+          </div>
+
+          <div class="metric-card glassmorphism">
+            <div class="metric-icon bg-green-tint">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div class="metric-data">
+              <span class="metric-label">Active Model</span>
+              <h3 class="metric-value" id="statModel">gpt-3.5-turbo</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart & Activity Row -->
+        <div class="dashboard-row">
+          <!-- Chart -->
+          <div class="chart-container card glassmorphism">
+            <div class="card-header">
+              <h4 class="card-title">Token Usage & API Requests</h4>
+              <select id="chartPeriodSelect" class="input-select-small">
+                <option value="7">Last 7 Days</option>
+                <option value="30">Last 30 Days</option>
+              </select>
+            </div>
+            <div class="chart-body">
+              <canvas id="usageChart"></canvas>
+            </div>
+          </div>
+          
+          <!-- Recent Activity -->
+          <div class="activity-container card glassmorphism">
+            <div class="card-header">
+              <h4 class="card-title">Recent Prompts</h4>
+            </div>
+            <div class="card-body">
+              <div class="activity-list" id="recentActivityList">
+                <div class="empty-state">
+                  <i class="fa-regular fa-comment-dots"></i>
+                  <p>No chat history available. Start a new chat to log data!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. AI CHAT PANEL -->
+      <section id="chatPanel" class="content-panel">
+        <div class="chat-workspace">
+          
+          <!-- Chat Sidebar (Thread List) -->
+          <aside class="chat-sidebar" id="chatSidebar">
+            <button class="btn btn-primary btn-block" id="newChatBtn">
+              <i class="fa-solid fa-plus"></i> <span>New Chat</span>
+            </button>
+            <div class="chat-search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="chatHistorySearch" placeholder="Search threads...">
+            </div>
+            <div class="chat-list" id="chatListContainer">
+              <!-- Dynamically populated conversations -->
+            </div>
+          </aside>
+
+          <!-- Chat Canvas -->
+          <div class="chat-canvas">
+            
+            <!-- Chat Header -->
+            <div class="chat-header">
+              <button id="toggleChatListBtn" class="chat-sidebar-toggle">
+                <i class="fa-solid fa-sidebar"></i>
+              </button>
+              <div class="chat-current-info">
+                <h4 id="activeChatTitle" class="chat-current-title">Start a Conversation</h4>
+                <p id="activeChatStatus" class="chat-current-status">Simulation Mode</p>
+              </div>
+              <div class="chat-model-selector-wrapper">
+                <label for="chatModelSelect"><i class="fa-solid fa-brain"></i></label>
+                <select id="chatModelSelect" class="input-select-small">
+                  <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                  <option value="gpt-4o">gpt-4o</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Messages Log -->
+            <div class="chat-messages" id="chatMessagesLog">
+              <div class="chat-welcome-state">
+                <div class="welcome-icon">
+                  <i class="fa-solid fa-robot"></i>
+                </div>
+                <h2>Hi, I'm Kevin.</h2>
+                <p>Choose an existing thread on the left, or start a new chat to explore development, ask questions, or run queries.</p>
+                <div class="welcome-actions">
+                  <button class="btn btn-secondary welcome-suggest-btn" data-prompt="Show me sample code for a glassmorphism card.">Code Sample</button>
+                  <button class="btn btn-secondary welcome-suggest-btn" data-prompt="How do I set up my custom OpenAI API Key?">API Setup</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Input Bar -->
+            <div class="chat-input-area">
+              <form id="chatInputForm">
+                <textarea id="chatInputField" placeholder="Message Kevin AI..." rows="1" required></textarea>
+                <button type="submit" class="chat-send-btn" id="chatSendBtn" disabled>
+                  <i class="fa-solid fa-paper-plane"></i>
+                </button>
+              </form>
+              <div class="chat-input-footer">
+                <span id="charCounter">0 characters</span>
+                <span class="warning-pill hidden" id="simulationPill"><i class="fa-solid fa-circle-exclamation"></i> Simulation Mode</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. PROFILE PANEL -->
+      <section id="profilePanel" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">My Profile</h2>
+            <p class="panel-subtitle">Manage your personal account credentials.</p>
+          </div>
+        </div>
+
+        <div class="profile-card card glassmorphism">
+          <div class="profile-avatar-section">
+            <div class="profile-large-avatar" id="profileLargeAvatar">KA</div>
+            <div>
+              <h3 id="profileNameDisplay">Developer Name</h3>
+              <p id="profileEmailDisplay">developer@company.com</p>
+            </div>
+          </div>
+          
+          <form id="profileForm" class="profile-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profileUsername">Display Name</label>
+                <div class="input-wrapper">
+                  <i class="fa-regular fa-user"></i>
+                  <input type="text" id="profileUsername" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="profileEmail">Email Address</label>
+                <div class="input-wrapper disabled">
+                  <i class="fa-regular fa-envelope"></i>
+                  <input type="email" id="profileEmail" readonly>
+                </div>
+                <small class="form-help">Email cannot be modified.</small>
+              </div>
+            </div>
+
+            <hr class="form-divider">
+            <h4 class="form-section-title">Change Password</h4>
+
+            <div class="form-group">
+              <label for="profileCurrentPassword">Current Password</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="profileCurrentPassword" placeholder="••••••••">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="profileNewPassword">New Password</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="profileNewPassword" placeholder="••••••••">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-floppy-disk"></i> Save Profile Changes
+            </button>
+            <div id="profileMessage" class="alert hidden"></div>
+          </form>
+        </div>
+      </section>
+
+      <!-- 4. SETTINGS PANEL -->
+      <section id="settingsPanel" class="content-panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Settings</h2>
+            <p class="panel-subtitle">Configure application settings and theme configurations.</p>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          
+          <!-- Style & UI Themes -->
+          <div class="card glassmorphism">
+            <div class="card-header">
+              <h4 class="card-title"><i class="fa-solid fa-palette"></i> Interface Theme</h4>
+            </div>
+            <div class="card-body theme-selectors-container">
+              <p class="settings-desc">Choose your preferred design look. Changes apply instantly.</p>
+              
+              <div class="theme-options">
+                <div class="theme-option-card active" data-theme="dark">
+                  <div class="theme-preview bg-slate-preview"></div>
+                  <span>Dark Slate</span>
+                </div>
+                <div class="theme-option-card" data-theme="light">
+                  <div class="theme-preview bg-light-preview"></div>
+                  <span>Ice Light</span>
+                </div>
+                <div class="theme-option-card" data-theme="cyberpunk">
+                  <div class="theme-preview bg-cyber-preview"></div>
+                  <span>Cyberpunk Neon</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Credentials Configurations -->
+          <div class="card glassmorphism">
+            <div class="card-header">
+              <h4 class="card-title"><i class="fa-solid fa-key"></i> OpenAI Credentials</h4>
+            </div>
+            <div class="card-body">
+              <p class="settings-desc">By default, the server attempts to connect via the environment variable configuration. You can override it locally below.</p>
+              
+              <form id="apiKeyForm">
+                <div class="form-group">
+                  <label for="settingsApiKey">Custom OpenAI API Key</label>
+                  <div class="input-wrapper">
+                    <i class="fa-solid fa-key"></i>
+                    <input type="password" id="settingsApiKey" placeholder="sk-...">
+                  </div>
+                  <small class="form-help">Keys are saved locally in your browser's LocalStorage and sent only to your private server instance.</small>
+                </div>
+                <div class="settings-actions">
+                  <button type="submit" class="btn btn-primary">Save Key</button>
+                  <button type="button" class="btn btn-secondary" id="clearApiKeyBtn">Clear Custom Key</button>
+                </div>
+                <div id="settingsApiMessage" class="alert hidden"></div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Dev Tools & Seeding -->
+          <div class="card glassmorphism full-width">
+            <div class="card-header">
+              <h4 class="card-title"><i class="fa-solid fa-code"></i> Developer Sandbox</h4>
+            </div>
+            <div class="card-body dev-sandbox-body">
+              <div>
+                <h5>Seed Simulation Logs</h5>
+                <p class="settings-desc">Seed 7 days of mock API analytics data (requests, token counts, and response latency) so you can test how charts and stats widgets display usage graphs.</p>
+              </div>
+              <div class="sandbox-actions">
+                <button id="seedDataBtn" class="btn btn-secondary">
+                  <i class="fa-solid fa-database"></i> Seed Usage Logs
+                </button>
+                <div id="sandboxMessage" class="alert hidden"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/auth.js"></script>
+  <script src="/js/dashboard.js"></script>
+  <script src="/js/chat.js"></script>
+  <script src="/js/settings.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
