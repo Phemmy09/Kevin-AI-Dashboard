@@ -29,55 +29,18 @@
         <p class="auth-subtitle">Elevating Human-AI Integration</p>
       </div>
 
-      <!-- Login Form -->
+      <!-- Login Form (Single Password) -->
       <form id="loginForm" class="auth-form active">
         <div class="form-group">
-          <label for="loginEmail">Email Address</label>
+          <label for="loginPassword">Console Security Password</label>
           <div class="input-wrapper">
-            <i class="fa-regular fa-envelope"></i>
-            <input type="email" id="loginEmail" placeholder="name@company.com" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="loginPassword">Password</label>
-          <div class="input-wrapper">
-            <i class="fa-solid fa-lock"></i>
-            <input type="password" id="loginPassword" placeholder="••••••••" required>
+            <i class="fa-solid fa-key"></i>
+            <input type="password" id="loginPassword" placeholder="Enter password..." required>
           </div>
         </div>
         <button type="submit" class="btn btn-primary btn-block">
-          <span>Sign In</span> <i class="fa-solid fa-arrow-right"></i>
+          <span>Access Console</span> <i class="fa-solid fa-arrow-right"></i>
         </button>
-        <p class="auth-toggle-text">Don't have an account? <a href="#" id="showRegister">Create account</a></p>
-      </form>
-
-      <!-- Register Form -->
-      <form id="registerForm" class="auth-form">
-        <div class="form-group">
-          <label for="registerName">Full Name</label>
-          <div class="input-wrapper">
-            <i class="fa-regular fa-user"></i>
-            <input type="text" id="registerName" placeholder="John Doe" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="registerEmail">Email Address</label>
-          <div class="input-wrapper">
-            <i class="fa-regular fa-envelope"></i>
-            <input type="email" id="registerEmail" placeholder="name@company.com" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="registerPassword">Password</label>
-          <div class="input-wrapper">
-            <i class="fa-solid fa-lock"></i>
-            <input type="password" id="registerPassword" placeholder="••••••••" minlength="6" required>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">
-          <span>Sign Up</span> <i class="fa-solid fa-user-plus"></i>
-        </button>
-        <p class="auth-toggle-text">Already have an account? <a href="#" id="showLogin">Sign in</a></p>
       </form>
 
       <!-- Global Message Box -->
@@ -352,24 +315,7 @@
               </div>
             </div>
 
-            <hr class="form-divider">
-            <h4 class="form-section-title">Change Password</h4>
 
-            <div class="form-group">
-              <label for="profileCurrentPassword">Current Password</label>
-              <div class="input-wrapper">
-                <i class="fa-solid fa-lock"></i>
-                <input type="password" id="profileCurrentPassword" placeholder="••••••••">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="profileNewPassword">New Password</label>
-              <div class="input-wrapper">
-                <i class="fa-solid fa-lock"></i>
-                <input type="password" id="profileNewPassword" placeholder="••••••••">
-              </div>
-            </div>
 
             <button type="submit" class="btn btn-primary">
               <i class="fa-solid fa-floppy-disk"></i> Save Profile Changes

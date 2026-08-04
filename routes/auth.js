@@ -24,61 +24,33 @@ function verifyToken(req, res, next) {
   }
 }
 
-// REGISTER endpoint
+// REGISTER endpoint (Disabled)
 router.post('/register', async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-    
-    if (!username || !email || !password) {
-      return res.status(400).json({ error: 'Please provide all required fields.' });
-    }
-    
-    // Check if user already exists
-    const existingUser = await DB.User.findByEmail(email);
-    if (existingUser) {
-      return res.status(400).json({ error: 'User with this email already exists.' });
-    }
-    
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
-    
-    // Save user
-    const newUser = await DB.User.create(username, email, passwordHash);
-    
-    // Generate token
-    const token = jwt.sign({ id: newUser.id }, JWT_SECRET, { expiresIn: '7d' });
-    
-    res.status(201).json({
-      message: 'Registration successful',
-      token,
-      user: { id: newUser.id, username: newUser.username, email: newUser.email }
-    });
-  } catch (error) {
-    console.error('Registration error:', error);
-    res.status(500).json({ error: 'An error occurred during registration.' });
-  }
+  return res.status(403).json({ error: 'Registration is disabled for single-password mode.' });
 });
 
 // LOGIN endpoint
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { password } = req.body;
     
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Please provide email and password.' });
+    if (!password) {
+      return res.status(400).json({ error: 'Please enter a password.' });
     }
     
-    // Find user
-    const user = await DB.User.findByEmail(email);
+    // Check global password
+    if (password !== 'Admin123') {
+      return res.status(400).json({ error: 'Incorrect password.' });
+    }
+    
+    const adminEmail = 'admin@kevinai.com';
+    
+    // Find or create default admin user
+    let user = await DB.User.findByEmail(adminEmail);
     if (!user) {
-      return res.status(400).json({ error: 'Invalid email or password.' });
-    }
-    
-    // Verify password
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-      return res.status(400).json({ error: 'Invalid email or password.' });
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash('Admin123', salt);
+      user = await DB.User.create('Admin', adminEmail, passwordHash);
     }
     
     // Generate token
@@ -120,28 +92,16 @@ router.put('/profile', verifyToken, async (req, res) => {
       return res.status(400).json({ error: 'Username is required.' });
     }
     
+    if (newPassword || currentPassword) {
+      return res.status(400).json({ error: 'Password changes are disabled for the global admin account.' });
+    }
+    
     const user = await DB.User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ error: 'User not found.' });
     }
     
-    let passwordHash = null;
-    
-    if (newPassword) {
-      if (!currentPassword) {
-        return res.status(400).json({ error: 'Current password is required to set a new password.' });
-      }
-      
-      const validPassword = await bcrypt.compare(currentPassword, user.password);
-      if (!validPassword) {
-        return res.status(400).json({ error: 'Incorrect current password.' });
-      }
-      
-      const salt = await bcrypt.genSalt(10);
-      passwordHash = await bcrypt.hash(newPassword, salt);
-    }
-    
-    await DB.User.updateProfile(req.user.id, username, passwordHash);
+    await DB.User.updateProfile(req.user.id, username);
     
     res.status(200).json({
       message: 'Profile updated successfully',

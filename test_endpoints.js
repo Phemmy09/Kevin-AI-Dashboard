@@ -1,17 +1,22 @@
 const http = require('http');
 
-function postJson(urlPath, data) {
+function postJson(urlPath, data, token = null) {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify(data);
+    const headers = {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(payload)
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
     const options = {
       hostname: 'localhost',
       port: 3000,
       path: urlPath,
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload)
-      }
+      headers
     };
 
     const req = http.request(options, (res) => {
@@ -64,138 +69,64 @@ function getJson(urlPath, token) {
 }
 
 async function runTests() {
-  console.log('--- STARTING ENDPOINT VERIFICATION TESTS ---');
+  console.log('--- STARTING SINGLE-PASSWORD AUTH VERIFICATION TESTS ---');
   try {
-    // 1. Test Registration
-    console.log('\n1. Testing User Registration...');
-    const regResult = await postJson('/api/auth/register', {
-      username: 'Test User',
-      email: 'test' + Math.floor(Math.random() * 1000000) + '@kevinai.com',
-      password: 'password123'
-    });
-    console.log('Status:', regResult.status);
-    console.log('Response:', regResult.data);
-    
-    if (regResult.status !== 201 || !regResult.data.token) {
-      throw new Error('Registration failed.');
+    // 1. Test Incorrect Login Password
+    console.log('\n1. Testing Login with Incorrect Password...');
+    const r1 = await postJson('/api/auth/login', { password: 'wrongPassword' });
+    console.log('Status:', r1.status);
+    console.log('Response:', r1.data);
+    if (r1.status !== 400) {
+      throw new Error('Should have failed login with wrong password.');
     }
     
-    const token = regResult.data.token;
-    const userId = regResult.data.user.id;
-    
-    // 2. Test Fetching Conversations
-    console.log('\n2. Testing Fetch Conversations...');
-    const convResult = await getJson('/api/chat/conversations', token);
-    console.log('Status:', convResult.status);
-    console.log('Conversations count:', convResult.data.conversations.length);
-    
-    // 3. Test Creating a Conversation
-    console.log('\n3. Testing Create Conversation...');
-    const createConvResult = await postJson('/api/chat/conversations', {});
-    // Wait, create conversation requires verifyToken, so we need to add auth headers.
-    // Let's modify our function to accept options or headers
-  } catch (error) {
-    console.error('Test failed:', error);
-  }
-}
-
-// Simple test that just calls the APIs
-async function simpleTest() {
-  try {
-    console.log('1. Registering user...');
-    const email = `test_${Date.now()}@kevinai.com`;
-    const r1 = await postJson('/api/auth/register', {
-      username: 'Kevin Dev',
-      email,
-      password: 'password123'
-    });
-    console.log('Status:', r1.status);
-    console.log('User:', r1.data.user);
-    const token = r1.data.token;
-    
-    console.log('\n2. Logging in user...');
-    const r2 = await postJson('/api/auth/login', {
-      email,
-      password: 'password123'
-    });
+    // 2. Test Correct Login Password
+    console.log('\n2. Testing Login with Correct Password ("Admin123")...');
+    const r2 = await postJson('/api/auth/login', { password: 'Admin123' });
     console.log('Status:', r2.status);
-    console.log('User Logged In:', r2.data.user);
+    console.log('Response User:', r2.data.user);
+    if (r2.status !== 200 || !r2.data.token) {
+      throw new Error('Should have successfully logged in.');
+    }
+    const token = r2.data.token;
+    
+    // 3. Test Profile Fetching
+    console.log('\n3. Testing Fetch Profile...');
+    const r3 = await getJson('/api/auth/profile', token);
+    console.log('Status:', r3.status);
+    console.log('Profile User:', r3.data.user);
+    if (r3.status !== 200) {
+      throw new Error('Failed to fetch profile.');
+    }
 
-    // Let's make a request to list conversations with headers
-    console.log('\n3. Creating a new chat thread...');
-    const createConvResult = await new Promise((resolve) => {
-      const payload = JSON.stringify({ title: 'Sample Code Thread' });
-      const options = {
-        hostname: 'localhost',
-        port: 3000,
-        path: '/api/chat/conversations',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(payload),
-          'Authorization': `Bearer ${token}`
-        }
-      };
-      const req = http.request(options, res => {
-        let body = '';
-        res.on('data', c => body += c);
-        res.on('end', () => resolve(JSON.parse(body)));
-      });
-      req.write(payload);
-      req.end();
-    });
-    console.log('Conversation Created:', createConvResult.conversation);
-    const convId = createConvResult.conversation.id;
+    // 4. Test Create Conversation
+    console.log('\n4. Testing Create Conversation...');
+    const r4 = await postJson('/api/chat/conversations', { title: 'Security Audits' }, token);
+    console.log('Status:', r4.status);
+    console.log('Conversation:', r4.data.conversation);
+    const convId = r4.data.conversation.id;
 
-    console.log('\n4. Sending message to AI (Simulation Mode)...');
-    const sendMsgResult = await new Promise((resolve) => {
-      const payload = JSON.stringify({ content: 'write a function in JavaScript', model: 'gpt-3.5-turbo' });
-      const options = {
-        hostname: 'localhost',
-        port: 3000,
-        path: `/api/chat/conversations/${convId}/messages`,
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(payload),
-          'Authorization': `Bearer ${token}`
-        }
-      };
-      const req = http.request(options, res => {
-        let body = '';
-        res.on('data', c => body += c);
-        res.on('end', () => resolve(JSON.parse(body)));
-      });
-      req.write(payload);
-      req.end();
-    });
-    console.log('AI Response (truncated):', sendMsgResult.message.content.substring(0, 100) + '...');
-    console.log('Stats:', sendMsgResult.stats);
+    // 5. Test Send Message to AI (Simulation Mode)
+    console.log('\n5. Testing Send Message (Simulation Mode)...');
+    const r5 = await postJson(`/api/chat/conversations/${convId}/messages`, {
+      content: 'verify connection failsafes',
+      model: 'gpt-3.5-turbo'
+    }, token);
+    console.log('Status:', r5.status);
+    console.log('AI Response (truncated):', r5.data.message.content.substring(0, 100) + '...');
+    console.log('Stats:', r5.data.stats);
 
-    console.log('\n5. Fetching analytics statistics...');
-    const statsResult = await new Promise((resolve) => {
-      const options = {
-        hostname: 'localhost',
-        port: 3000,
-        path: '/api/analytics/stats',
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      };
-      const req = http.request(options, res => {
-        let body = '';
-        res.on('data', c => body += c);
-        res.on('end', () => resolve(JSON.parse(body)));
-      });
-      req.end();
-    });
-    console.log('Statistics:', statsResult);
+    // 6. Test Fetch Analytics
+    console.log('\n6. Testing Fetch Analytics Stats...');
+    const r6 = await getJson('/api/analytics/stats', token);
+    console.log('Status:', r6.status);
+    console.log('Statistics:', r6.data);
 
-    console.log('\n--- ALL API TEST STEPS PASSED SUCCESSFULLY ---');
+    console.log('\n--- ALL NEW AUTH SCHEME API TESTS PASSED SUCCESSFULLY ---');
   } catch (e) {
     console.error('Test run error:', e);
+    process.exit(1);
   }
 }
 
-simpleTest();
+runTests();
