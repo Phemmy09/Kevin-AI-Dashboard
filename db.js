@@ -84,7 +84,9 @@ async function connectDB() {
     console.log('Falling back to local SQLite database...');
     isSQLite = true;
     
-    const dbPath = path.join(__dirname, 'database.sqlite');
+    const dbPath = process.env.VERCEL
+      ? '/tmp/database.sqlite'
+      : path.join(__dirname, 'database.sqlite');
     sqliteDb = new sqlite3.Database(dbPath);
     
     // Initialize SQLite tables
